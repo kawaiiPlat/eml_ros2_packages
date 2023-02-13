@@ -28,9 +28,13 @@ class control_handler(Node):
         acker_msg = AckermannDriveStamped()
         acker_msg.header = msg.header
 
+        # set the ROC values to indicate unlimited ROC
+        acker_msg.drive.steering_angle_velocity = 0.0
+        acker_msg.drive.acceleration = 0.0
+        acker_msg.drive.jerk = 0.0
+
         # check stop button
         my_param = self.get_parameter('stop_button').get_parameter_value().string_value
-        
         index = self.button_dict[my_param]
         stop_button = msg.buttons[index]
 
@@ -45,9 +49,7 @@ class control_handler(Node):
             return
 
         # if not pressed
-        if msg.axes[1] > 0:
-            acker_msg.drive.speed = msg.axes[1] * 100
-
+        acker_msg.drive.speed = msg.axes[1] * 100
         acker_msg.drive.steering_angle = msg.axes[0] * -45
 
         #self.get_logger().info(f"Publishing Ackermann: Speed = {acker_msg.drive.speed}, Angle = {acker_msg.drive.steering_angle}")

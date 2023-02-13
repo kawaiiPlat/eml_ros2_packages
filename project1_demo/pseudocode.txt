@@ -40,11 +40,10 @@ Node Sub Callback
     	acker_msg.drive.speed = 0.0
     	acker_msg.drive.steering_angle = 0.0
     else:
-        # convert joy ranges to ackermann ranges
-        if msg.axes[4] > 0.0:
-            # Check if the right stick is pushed forward
-            acker_msg.drive.speed = msg.axes[4] * 100.0
-            # gets right stick vertical as speed | 0-100 range
+
+        # Check if the right stick is pushed forward
+        acker_msg.drive.speed = msg.axes[4] * 100.0
+        # gets right stick vertical as speed | 0-100 range
 
         acker_msg.drive.steering_angle = msg.axes[3] * -45.0	
         # gets right stick horizontal reading for steering angle 
