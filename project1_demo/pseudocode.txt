@@ -21,36 +21,41 @@ Node Sub Callback
     
     # copy header just in case
     acker_msg.header = msg.header
+    
+    #set the ROC values to indicate unlimited ROC
+    acker_msg.AckermannDrive.steering_angle_velocity = 0.0
+    acker_msg.AckermannDrive.acceleration = 0.0
+    acker_msg.AckermannDrive.jerk = 0.0
 
     # check if stop button is pressed
     my_param = get parameter as string
     index = self.button_dict[my_param]  
-    stop_button = msg.buttons[index] # probaly can skip a few steps or do it all in one step
+    stop_button = msg.buttons[index]
     
-    # figure out how to stop if stop_button is pressed, maybe a flag?
+    # stop button flag setter
     if stop_button:
     	self.isStopped = true
     
     if self.isStopped:
-    	acker_msg.drive.speed = 0 
-    	acker_msg.drive.steering_angle = 0
-    	optional: log that speed and angle
-    	publish acker_msg   
-    
+    	acker_msg.drive.speed = 0.0
+    	acker_msg.drive.steering_angle = 0.0
+    else:
+        # convert joy ranges to ackermann ranges
+        if msg.axes[4] > 0.0:
+            # Check if the right stick is pushed forward
+            acker_msg.drive.speed = msg.axes[4] * 100.0
+            # gets right stick vertical as speed | 0-100 range
 
-    
-    # convert joy to ackermann
-    if msg.axes[4] > 0:
-        acker_msg.drive.speed = msg.axes[4] * 100		# gets right stick vertical as speed | 0-100 range
-    
-    acker_msg.drive.steering_angle = msg.axes[3] * -45	# gets right stick horizontal for steering angle | max: 45 (right), min -45 (left) | since Joy does -1 for right and 1 for left we would have to flip it
-    
-    optional: log speed and steering angle
+        acker_msg.drive.steering_angle = msg.axes[3] * -45.0	
+        # gets right stick horizontal reading for steering angle 
+        # max for ackerman: 45 (right), min -45 (left)
+        # since Joy does -1 for right and 1 for left we would have to flip it
+        
+    optional: log that speed and angle
     publish acker_msg
-
 -------------------------------------------------------------------------------------------------------
 
-The following is not pseudocode but just the button mappings of the xbox controller
+The following are the button mappings of the xbox controller to the Joy message fields
 
 Buttons:
 0 A
@@ -75,7 +80,4 @@ Axes:
 5 RT
 6 D pad horizontal
 7 D pad vertical
-
 -------------------------------------------------------------------------------------------------------
-
-
