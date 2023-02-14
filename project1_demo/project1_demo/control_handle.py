@@ -49,7 +49,7 @@ class control_handler(Node):
             return
 
         # if not pressed
-        acker_msg.drive.speed = msg.axes[1] * 100
+        acker_msg.drive.speed = msg.axes[1] * 6
         acker_msg.drive.steering_angle = msg.axes[0] * -45
 
         #self.get_logger().info(f"Publishing Ackermann: Speed = {acker_msg.drive.speed}, Angle = {acker_msg.drive.steering_angle}")

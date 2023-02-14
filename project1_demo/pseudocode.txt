@@ -42,7 +42,7 @@ Node Sub Callback
     else:
 
         # Check if the right stick is pushed forward
-        acker_msg.drive.speed = msg.axes[4] * 100.0
+        acker_msg.drive.speed = msg.axes[4] * 6
         # gets right stick vertical as speed | 0-100 range
 
         acker_msg.drive.steering_angle = msg.axes[3] * -45.0	
