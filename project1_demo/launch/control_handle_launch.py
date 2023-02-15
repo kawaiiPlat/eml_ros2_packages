@@ -28,5 +28,6 @@ def generate_launch_description():
         name = "sim",
     )
 
-    ld.add_action([stop_button_launch_arg,node])
+    ld.add_action(stop_button_launch_arg)
+    ld.add_action(node)
     return ld
