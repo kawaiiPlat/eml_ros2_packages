@@ -15,7 +15,12 @@ def generate_launch_description():
         default_value = TextSubstitution(text='X')
     )
 
-    node = Node(
+    joy_node = Node(
+        package="joy",
+        executable="joy_node",
+    )
+
+    control_handle_node = Node(
 
         package    = "project1_demo",
         executable = "control_handle",
@@ -25,9 +30,9 @@ def generate_launch_description():
                 'stop_button' : LaunchConfiguration('stop_button'),
             }
         ],
-        name = "sim",
     )
 
     ld.add_action(stop_button_launch_arg)
-    ld.add_action(node)
+    ld.add_action(joy_node)
+    ld.add_action(control_handle_node)
     return ld
