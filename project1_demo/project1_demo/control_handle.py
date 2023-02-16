@@ -15,7 +15,7 @@ class control_handler(Node):
 
         # parameter
         self.declare_parameter('stop_button', 'X')
-
+        self.start_param = self.get_parameter('stop_button').get_parameter_value().string_value
         self.get_logger().info(f"Stop button is: {self.get_parameter('stop_button').get_parameter_value().string_value}")
         
         # define subscriber and publisher
@@ -37,6 +37,11 @@ class control_handler(Node):
         my_param = self.get_parameter('stop_button').get_parameter_value().string_value
         index = self.button_dict[my_param]
         stop_button = msg.buttons[index]
+
+        # display new parameter if changed
+        if my_param is not self.start_param:
+            self.get_logger().info(f"Parameter changed to {my_param}")
+            start_param = my_param
 
         if stop_button and not self.isStopped:
             self.isStopped = True
