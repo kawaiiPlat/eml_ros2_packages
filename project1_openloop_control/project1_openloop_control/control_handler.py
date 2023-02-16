@@ -15,7 +15,7 @@ class control_handler(Node):
 
         # parameter
         self.declare_parameter('stop_button', 'X')
-
+        self.start_param = self.get_parameter('stop_button').get_parameter_value().string_value
         self.get_logger().info(f"Stop button is: {self.get_parameter('stop_button').get_parameter_value().string_value}")
         
         # define subscriber and publisher
@@ -38,6 +38,11 @@ class control_handler(Node):
         index = self.button_dict[my_param]
         stop_button = msg.buttons[index]
 
+        # display new parameter if changed
+        if my_param is not self.start_param:
+            self.get_logger().info(f"Parameter changed to {my_param}")
+            self.start_param = my_param
+
         if stop_button and not self.isStopped:
             self.isStopped = True
             self.get_logger().info("Stop button pressed!")
@@ -49,7 +54,7 @@ class control_handler(Node):
             return
 
         # if not pressed
-        acker_msg.drive.speed = msg.axes[1] * 6
+        acker_msg.drive.speed = msg.axes[1] * 6.0
         acker_msg.drive.steering_angle = msg.axes[0] * -45
 
         #self.get_logger().info(f"Publishing Ackermann: Speed = {acker_msg.drive.speed}, Angle = {acker_msg.drive.steering_angle}")
