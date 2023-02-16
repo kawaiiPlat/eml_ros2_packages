@@ -2,8 +2,7 @@ import os
 from glob import glob
 from setuptools import setup
 
-
-package_name = 'project1_demo'
+package_name = 'project1_openloop_control'
 
 setup(
     name=package_name,
@@ -24,8 +23,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'control_handle = project1_demo.control_handle:main'
-
+            'control_handler = project1_openloop_control.control_handler:main',
         ],
     },
 )

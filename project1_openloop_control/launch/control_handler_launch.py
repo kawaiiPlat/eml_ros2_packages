@@ -22,8 +22,8 @@ def generate_launch_description():
 
     control_handle_node = Node(
 
-        package    = "project1_demo",
-        executable = "control_handle",
+        package    = "project1_openloop_control",
+        executable = "control_handler",
         parameters = 
         [
             {

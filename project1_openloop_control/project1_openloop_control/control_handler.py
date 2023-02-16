@@ -41,7 +41,7 @@ class control_handler(Node):
         # display new parameter if changed
         if my_param is not self.start_param:
             self.get_logger().info(f"Parameter changed to {my_param}")
-            start_param = my_param
+            self.start_param = my_param
 
         if stop_button and not self.isStopped:
             self.isStopped = True
