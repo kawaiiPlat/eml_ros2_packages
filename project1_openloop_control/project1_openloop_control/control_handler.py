@@ -4,6 +4,8 @@ from rclpy.node import Node
 from sensor_msgs.msg import Joy
 from ackermann_msgs.msg import AckermannDriveStamped
 
+import math
+
 class control_handler(Node):
 
     def __init__(self):
@@ -38,10 +40,20 @@ class control_handler(Node):
         index = self.button_dict[my_param]
         stop_button = msg.buttons[index]
 
+        # if not pressed
+        acker_msg.drive.speed = msg.axes[1] * 6.0
+        acker_msg.drive.steering_angle = math.radians(msg.axes[0] * -45.0)
+
         # display new parameter if changed
         if my_param is not self.start_param:
             self.get_logger().info(f"Parameter changed to {my_param}")
             self.start_param = my_param
+
+        # unkill button 
+        unkill_button = msg.buttons[10]
+        if unkill_button and self.isStopped:
+            self.get_logger().info("Unkilled!")
+            self.isStopped = False
 
         if stop_button and not self.isStopped:
             self.isStopped = True
@@ -50,12 +62,6 @@ class control_handler(Node):
         if self.isStopped:
             acker_msg.drive.speed = 0.0 
             acker_msg.drive.steering_angle = 0.0
-            self.publisher.publish(acker_msg)
-            return
-
-        # if not pressed
-        acker_msg.drive.speed = msg.axes[1] * 6.0
-        acker_msg.drive.steering_angle = msg.axes[0] * -45
 
         #self.get_logger().info(f"Publishing Ackermann: Speed = {acker_msg.drive.speed}, Angle = {acker_msg.drive.steering_angle}")
         self.publisher.publish(acker_msg)
