@@ -1,0 +1,82 @@
+Node 1: project_node (tbd)
+Import messages Joy from sensor_msgs
+Import messages AckermannDriveStamped from ackermann_msgs
+
+Node Init:
+
+    self.button_dict = {'A':0, 'B':1, 'X':2, "Y":3, "LB":4, "RB":5, "Back":6, "Start":7, "Xbox":8, "L3":9, "R3":10}
+    parameter called stop_button with default 'X'
+    
+    self.isStopped = false
+
+    publisher with topic vehicle_command_ackermann; message AckermannDriveStamped
+    subscriber with topic Joy;  message Joy
+
+Node Sub Callback
+    # msg will be the name of the Joy msg passed
+    # acker_msg is the AckermannDriveStamped msg that will be published
+    
+    # create message
+    AckermannDriveStamped acker_msg
+    
+    # copy header just in case
+    acker_msg.header = msg.header
+    
+    #set the ROC values to indicate unlimited ROC
+    acker_msg.AckermannDrive.steering_angle_velocity = 0.0
+    acker_msg.AckermannDrive.acceleration = 0.0
+    acker_msg.AckermannDrive.jerk = 0.0
+
+    # check if stop button is pressed
+    my_param = get parameter as string
+    index = self.button_dict[my_param]  
+    stop_button = msg.buttons[index]
+    
+    # stop button flag setter
+    if stop_button:
+    	self.isStopped = true
+    
+    if self.isStopped:
+    	acker_msg.drive.speed = 0.0
+    	acker_msg.drive.steering_angle = 0.0
+    else:
+
+        # Check if the right stick is pushed forward
+        acker_msg.drive.speed = msg.axes[4] * 6.0
+        # gets right stick vertical as speed | 0-100 range
+
+        acker_msg.drive.steering_angle = msg.axes[3] * -45.0	
+        # gets right stick horizontal reading for steering angle 
+        # max for ackerman: 45 (right), min -45 (left)
+        # since Joy does -1 for right and 1 for left we would have to flip it
+        
+    optional: log that speed and angle
+    publish acker_msg
+-------------------------------------------------------------------------------------------------------
+
+The following are the button mappings of the xbox controller to the Joy message fields
+
+Buttons:
+0 A
+1 B
+2 X
+3 Y
+4 LB
+5 RB
+6 back
+7 start
+8 xbox button
+9 L3
+10 R3
+
+
+Axes:
+0 left-stick horizontal
+1 left-stick vertical
+2 LT
+3 right stick horizontal
+4 right stick vertical 
+5 RT
+6 D pad horizontal
+7 D pad vertical
+-------------------------------------------------------------------------------------------------------

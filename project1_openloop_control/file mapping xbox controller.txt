@@ -1,0 +1,25 @@
+Buttons:
+0 A
+1 B
+2 X
+3 Y
+4 LB
+5 RB
+6 back
+7 start
+8 xbox button
+9 L3
+10 R3
+
+
+Axes:
+0 left-stick horizontal
+1 left-stick vertical
+2 LT
+3 right stick horizontal
+4 right stick vertical 
+5 RT
+6 D pad horizontal
+7 D pad vertical
+
+
