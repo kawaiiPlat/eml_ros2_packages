@@ -2,10 +2,10 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>project1_openloop_control</name>
-  <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="adrian23fernandez@gmail.com">adrian</maintainer>
-  <license>TODO: License declaration</license>
+  <version>1.0.0</version>
+  <description>Package that convers joy data into ackermann data</description>
+  <maintainer email="adrian23fernandez@gmail.com">Adrian F., Jarrod S., Mehron T.</maintainer>
+  <license>Apache License 2.0</license>
 
   <exec_depend>rclpy</exec_depend>
   <exec_depend>sensor_msgs</exec_depend>
