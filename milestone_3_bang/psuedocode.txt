@@ -1,7 +1,8 @@
 Node 1: Controller
 Import sensor_msgs LaserScan
 Import ackermann_msgs AckermannDriveStamped
-Import math for cos sin pi randians
+Import math for cos sin pi randians atan2
+Import numpy for sign isnan
 
 Node Init:
 
@@ -15,7 +16,7 @@ Node Subscriber Callback
     acker_msg = AckermannDriveStamped()
     acker_msg.header = msg.header
     acker_msg.drive.speed = 1
-    acker_msg.drive.acceleration = 1
+    acker_msg.drive.acceleration = 0
     acker_msg.drive.jerk = 0
     acker_msg.drive.steering_angle_velocity = 0
     

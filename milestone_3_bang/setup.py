@@ -20,6 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'bb_controller = milestone_3_bang.bb_controller:main'
         ],
     },
 )
