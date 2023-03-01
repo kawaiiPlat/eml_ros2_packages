@@ -1,9 +1,9 @@
 ===================================================================================
 FILE NAME   | pseudo.txt
 AUTHOR      | Mehron Talebi
-PUBLISHED   | 2023 February 08
+PUBLISHED   | 2023 February 27
 -----------------------------------------------------------------------------------
-DESCRIPTION | Point Cloud Conversion Design
+DESCRIPTION | Ackermann Steering Control Design
 ===================================================================================
 
 
@@ -18,7 +18,7 @@ IMPORT numpy AS np
 FROM rclpy.node IMPORT Node
 FROM sensor_msgs.msg IMPORT PointCloud
 FROM sensor_msgs.msg IMPORT LaserScan
-FROM geometry_msgs.msg IMPORT Point32
+FROM geometry_msgs.msg IMPORT Point32 
 FROM ackermann_msgs.msg IMPORT AckermannDriveStamped
 
 ===================================================================================
@@ -30,9 +30,10 @@ SECTION      | [INIT] Initialization Function
 -----------------------------------------------------------------------------------
 
 def __init__ (self):
-    
-    SUBSCRIBE to TOPICS (scan) with TYPE (LaserScan)
-    PUBLISH to TOPICS (card_coord) with TYPE (PointCloud)
+
+    self.create_subscription(topic = 'scan', msg_type = LaserScan)
+    self.pub = self.create_publisher(topic = 'vehicle_command_ackermann',
+                                     msg_type = PointCloud)
 
 ===================================================================================
 
@@ -42,27 +43,43 @@ def __init__ (self):
 SECTION      | [INIT] Callback Function
 -----------------------------------------------------------------------------------
 
-FUNCTION (Callback) with INPUT (LaserScan) with OUTPUT (PointCloud)
-    
-    DEFINE (laser) with TYPE (LaserScan) from INPUT
-    DEFINE (cloud) with TYPE (PointCloud)
+def callback (msg):
 
-    LOOP with ELEMENTS (angle_min,angle_max,range_min,range_max) in PARENT (laser)
+    # COMMENT: Read Message Parameters.
+    header_x = msg.header
+    ranges_m = msg.ranges
+    angle_min_r = msg.angle_min
+    angle_max_r = msg.angle_max
+    angle_inc_r = msg.angle_increment
 
-        DEFINE (distance) with TYPE (Float32)
-        DEFINE (angle) with TYPE (Float32)
-        DEFINE (point) with TYPE (Point32) with MEMBERS (x,y,z)
+    # COMMENT: Calculate Distance Parameters.
+    theta_r = radians(20)
+    doffs_m = ranges_m[((theta_r)/(angle_inc_r))]
+    dperp_m = 1.0
 
-        ASSIGN (distance) as VALUE (range_max-range_min)
-        ASSIGN (angle) as VALUE (angle_max-angle_min)
+    # COMMENT: Define Ackermann Message.
+    ackermann = AckermannDriveStamped()
 
-        ASSIGN (x) with PARENT (point) as VALUE ((distance)*(Cos(Pi-angle)))
-        ASSIGN (y) with PARENT (point) as VALUE ((distance)*(Sin(Pi-angle)))
-        ASSIGN (z) with PARENT (point) as VALUE (0)
+    # COMMENT: Check if Distance Below Bounds.
+    if (doffs_m < dperp_m):
 
-        APPEND (point) to MEMBER (points) with PARENT (cloud)
+        # COMMENT: Turn Away From Wall.
+        ackermann.steering_angle = radians(+45)
 
-    WRITE (header) from PARENT (laser) to MEMBER (header) with PARENT (cloud)
-    WRITE (cloud) to OUTPUT
+    # COMMENT: Check if Distance Above Bounds.
+    if (doffs_m > dperp_m):
+
+        # COMMENT: Turn Away From Wall.
+        ackermann.steering_angle = radians(-45)
+
+    # COMMENT: Write to Ackermann Message.
+    ackermann.header = header
+    ackermann.drive.speed = 1.0
+    ackermann.drive.acceleration = 0
+    ackermann.drive.jerk = 0
+    ackermann.drive.steering_angle_velocity = 0
+
+    # COMMENT: Publish Message.
+    self.pub.publish(ackermann)
 
 ===================================================================================
