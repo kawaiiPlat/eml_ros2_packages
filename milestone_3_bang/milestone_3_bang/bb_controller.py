@@ -29,10 +29,10 @@ class BangBangController(Node):
         acker_msg.drive.steering_angle_velocity = 0.0
 
         d_setpoint = 0.5
-        angle = 30.0
+        angle = 30
         coeffient = 1
 
-        d_offset = msg.range[(90+angle)*msg.angle_increment]
+        d_offset = msg.ranges[(90+angle)*2]
 
         if d_offset > d_setpoint:
             coeffient = 1
@@ -41,6 +41,7 @@ class BangBangController(Node):
         
         acker_msg.drive.steering_angle = math.radians(coeffient*10)
 
+        print(acker_msg.drive.steering_angle)
         self.publisher_.publish(acker_msg)
             
 def main(args=None):
