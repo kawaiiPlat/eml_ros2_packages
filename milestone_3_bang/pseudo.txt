@@ -1,0 +1,85 @@
+===================================================================================
+FILE NAME   | pseudo.txt
+AUTHOR      | Mehron Talebi
+PUBLISHED   | 2023 February 27
+-----------------------------------------------------------------------------------
+DESCRIPTION | Ackermann Steering Control Design
+===================================================================================
+
+
+
+===================================================================================
+SECTION      | Libraries
+-----------------------------------------------------------------------------------
+
+IMPORT math
+IMPORT numpy AS np
+
+FROM rclpy.node IMPORT Node
+FROM sensor_msgs.msg IMPORT PointCloud
+FROM sensor_msgs.msg IMPORT LaserScan
+FROM geometry_msgs.msg IMPORT Point32 
+FROM ackermann_msgs.msg IMPORT AckermannDriveStamped
+
+===================================================================================
+
+
+
+===================================================================================
+SECTION      | [INIT] Initialization Function
+-----------------------------------------------------------------------------------
+
+def __init__ (self):
+
+    self.create_subscription(topic = 'scan', msg_type = LaserScan)
+    self.pub = self.create_publisher(topic = 'vehicle_command_ackermann',
+                                     msg_type = PointCloud)
+
+===================================================================================
+
+
+
+===================================================================================
+SECTION      | [INIT] Callback Function
+-----------------------------------------------------------------------------------
+
+def callback (msg):
+
+    # COMMENT: Read Message Parameters.
+    header_x = msg.header
+    ranges_m = msg.ranges
+    angle_min_r = msg.angle_min
+    angle_max_r = msg.angle_max
+    angle_inc_r = msg.angle_increment
+
+    # COMMENT: Calculate Distance Parameters.
+    theta_r = radians(20)
+    doffs_m = ranges_m[((theta_r)/(angle_inc_r))]
+    dperp_m = 1.0
+
+    # COMMENT: Define Ackermann Message.
+    ackermann = AckermannDriveStamped()
+
+    # COMMENT: Check if Distance Below Bounds.
+    if (doffs_m < dperp_m):
+
+        # COMMENT: Turn Away From Wall.
+        ackermann.steering_angle = radians(+45)
+
+    # COMMENT: Check if Distance Above Bounds.
+    if (doffs_m > dperp_m):
+
+        # COMMENT: Turn Away From Wall.
+        ackermann.steering_angle = radians(-45)
+
+    # COMMENT: Write to Ackermann Message.
+    ackermann.header = header
+    ackermann.drive.speed = 1.0
+    ackermann.drive.acceleration = 0
+    ackermann.drive.jerk = 0
+    ackermann.drive.steering_angle_velocity = 0
+
+    # COMMENT: Publish Message.
+    self.pub.publish(ackermann)
+
+===================================================================================
