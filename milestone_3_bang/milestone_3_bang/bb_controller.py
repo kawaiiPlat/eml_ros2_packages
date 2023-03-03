@@ -27,21 +27,51 @@ class BangBangController(Node):
         acker_msg.drive.jerk = 0.0
         acker_msg.drive.steering_angle_velocity = 0.0
 
+        # Old algorithm
+        # # set the constants
+        # d_setpoint = 0.5
+        # angle = 30
+        # coeffient = 1
+
+        # # get the distance based on constants
+        # d_offset = msg.ranges[(90+angle)*2]
+
+        # # check for error to set coeffient
+        # if d_offset > d_setpoint:
+        #     coeffient = 1
+        # else :
+        #     coeffient = -1
+        
+        # # update steering angle based on coeffient
+        # acker_msg.drive.steering_angle = math.radians(coeffient*10)
+
+        # New Algorithm
         # set the constants
         d_setpoint = 0.5
         angle = 30
         coeffient = 1
+        L = 0.020
 
-        # get the distance based on constants
+        # get the distances based on constants
         d_offset = msg.ranges[(90+angle)*2]
+        d = msg.ranges[90*2]
 
-        # check for error to set coeffient
-        if d_offset > d_setpoint:
+        # find alpha
+        alpha = math.atan2(d_offset*math.cos(math.radians(angle))-d, d_offset*math.sin(math.radians(angle)))
+
+        # find D_perp
+        D_perp = d * math.cos(alpha)
+
+        # find D_perp+L
+        D_perp_L = L*math.sin(alpha) + D_perp
+
+        # check error
+        if D_perp_L > d_setpoint:
             coeffient = 1
         else :
             coeffient = -1
         
-        # update steering angle based on coeffient
+        # set steering angle based on coeffient
         acker_msg.drive.steering_angle = math.radians(coeffient*10)
 
         # publish
@@ -52,7 +82,10 @@ def main(args=None):
 
     my_node = BangBangController()
 
-    rclpy.spin(my_node)
+    try:
+       rclpy.spin(my_node)
+    except KeyboardInterrupt():
+        print(" Keyboard Interrupt has occured. Exiing program now.")
 
     # Destroy the node explicitly
     # (optional - otherwise it will be done automatically
