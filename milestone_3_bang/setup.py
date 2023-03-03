@@ -4,7 +4,7 @@ package_name = 'milestone_3_bang'
 
 setup(
     name=package_name,
-    version='0.0.0',
+    version='1.0.0',
     packages=[package_name],
     data_files=[
         ('share/ament_index/resource_index/packages',
@@ -13,10 +13,10 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='adrian',
+    maintainer='Adrian F., Jarrod S., Mehron T.',
     maintainer_email='adrian23fernandez@gmail.com',
-    description='TODO: Package description',
-    license='TODO: License declaration',
+    description='Package that is a simple Bang Bang Controller for the Av1tenth Car',
+    license='Apache License 2.0',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
