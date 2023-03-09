@@ -34,7 +34,7 @@ class BangBangController(Node):
         acker_msg.drive.steering_angle_velocity = 0.0
 
         # set the constants
-        d_setpoint = 0.5
+        d_setpoint = 0.50
         angle = 30
         coeffient = 1
         L = 0.020
@@ -55,44 +55,112 @@ class BangBangController(Node):
         # get error
         error = d_setpoint - D_perp_L
 
+        # normalize the error 
+        error /= d_setpoint 
+
         # PID constants
         # for now it is "???", they need to be figured out through experimenting
-        K_p = -45*0.50  #??? # , lets say 
-        K_i = -45*0.25  #???
-        K_d = -45*0.05  #???
+        K_p = -1.50    #-1*0.50  #??? # , lets say 
+        K_i =  1*0.35  #???
+        K_d = -1*0.05  #???
+
+        # window length
+        window = 100
 
         # add new error to list
         length = len(self.e_k)
         k = length-1
+
+        # Check if NaN or inf
+        if (math.isnan(D_perp_L) or math.isinf(D_perp_L)):
+            if (length == 0):
+                error = 0
+            else:
+                error = self.e_k[k]
+        
+        # check if length less than the window
+        if (length < window):
+            self.e_k.append(error)
+            length += 1
+            k += 1
+            self.Sigma += error
+        else: 
+            oldest_error = self.e_k.pop(0)
+            self.Sigma -= oldest_error
+            self.Sigma += error
+            self.e_k.append(error)
+            
 
         """Proportional"""
         P = K_p * error
 
         """Integration"""
         # window range for integration
-        window = 100
-        Sum = 0   
+        # Sum = 0   
 
-        # logic for if list length is less than desired
-        if length < window:
-            # add new error value to list and 
-            # sigma method var
-            self.e_k.append(error)
-            self.Sigma += error
+        # if (math.isnan(d_offset) or math.isinf(d_offset) or math.isnan(d) or math.isinf(d)):
+            
+        #     error = self.e_k[len(self.e_k)-1]
 
-            # update length and k
-            length += 1
-            k  += 1
-        else:
-            # remove first error in list from 
-            # sigma method var and list
-            # add new error
-            self.Sigma += error - self.e_k[0]
-            self.e_k.pop(0)
-            self.e_k.append(error)
-            Sum = self.Sigma
+        #     # Check if Window is Full.
+        #     if (length >= window) :
 
-        I = K_i * Sum * 0.1
+        #         # Pop Oldest Value from Integration Window.
+        #         oldest = self.e_k.pop(0)
+        #         self.Sigma -= oldest
+        #         self.Sigma += error
+        #         self.e_k.append(error)
+            
+        #     # Check if Window is not Full.
+        #     else :
+                
+        #         if (len(self.e_k)-1 >= 0):
+
+        #             self.e_k.append(error)
+        #             self.Sigma += error
+
+        #         else:
+
+        #             return
+
+        # else:
+
+        #     # Check if Window is Full.
+        #     if (length >= window) :
+
+        #         # Pop Oldest Value from Integration Window.
+        #         oldest = self.e_k.pop(0)
+        #         self.Sigma -= oldest
+        #         self.Sigma += error
+        #         self.e_k.append(error)
+            
+        #     # Check if Window is not Full.
+        #     else :
+            
+        #         self.e_k.append(error)
+        #         self.Sigma += error
+ 
+        # if length < window:
+        #     # add new error value to list and 
+        #     # sigma method var
+        #     self.e_k.append(error)
+        #     self.Sigma += error
+        #     # Sum = Self.Sigma
+
+        #     # update length and k
+        #     length += 1
+        #     k  += 1
+        # else:
+        #     # remove first error in list from 
+        #     # sigma method var and list
+        #     # add new error
+        #     self.Sigma += error - self.e_k[0]
+        #     self.e_k.pop(0)
+        #     self.e_k.append(error)
+        #     # Sum = self.Sigma
+
+        # I = K_i * Sum * 0.1
+        I = (K_i * self.Sigma * 0.1) / len(self.e_k)
 
         """Derivative"""
         # for now, we will only be using a PI controller
@@ -108,13 +176,14 @@ class BangBangController(Node):
 
 
         # store as steering angle
-        acker_msg.drive.steering_angle = math.radians(u)
+        acker_msg.drive.steering_angle = u #math.radians(u)
 
-        self.get_logger().info(f"{D_perp_L}")
-        self.get_logger().info(f"{P}")
-        self.get_logger().info(f"{I}")
-        self.get_logger().info(f"{D}")
-        self.get_logger().info(f"{u}")
+        self.get_logger().info(f"D_perp_L: {D_perp_L}")
+        self.get_logger().info(f"Error: {error}")
+        self.get_logger().info(f"P: {P}")
+        self.get_logger().info(f"I: {I}")
+        self.get_logger().info(f"D: {D}")
+        self.get_logger().info(f"u: {u}")
         self.get_logger().info(f"\n")
         # publish msg
         self.publisher_.publish(acker_msg)
@@ -126,8 +195,8 @@ def main(args=None):
 
     try:
         rclpy.spin(my_node)
-    except KeyboardInterrupt():
-        print(" Keyboard Interrupt has occured. Exiting Program now.")
+    except KeyboardInterrupt:
+        my_node.get_logger().info(" Keyboard Interrupt has occured. Exiting Program now.")
 
     # Destroy the node explicitly
     # (optional - otherwise it will be done automatically
