@@ -1,0 +1,106 @@
+Node 1: PID Controller
+Import sensor_msgs LaserScan
+Import ackermann_msgs AckermannDriveStamped
+Import math for cos sin pi randians atan2
+Import numpy for sign isnan
+
+Node Init:
+
+    subscriber with topic scan; message LaserScan
+    publisher with topic vehicle_command_ackermann;  message AckermannDriveStamped
+
+    # PID method variables
+    self.e_k = []
+    self.Sigma = 0
+    
+Node Subscriber Callback
+    # msg is the passed LaserScan message
+    
+    # create publish message and assign values 
+    acker_msg = AckermannDriveStamped()
+    acker_msg.header = msg.header
+    acker_msg.drive.speed = 1
+    acker_msg.drive.acceleration = 0
+    acker_msg.drive.jerk = 0
+    acker_msg.drive.steering_angle_velocity = 0
+    
+    # TODO: controller math
+    # set the  constants
+    d_setpoint = 0.5    # set distance from wall in meters
+    angle = 30          # set angle from perpendicular in degrees
+    L = 0.020           # look ahead distance in meters
+
+    # get the distances based on constants
+    d_offset = msg.ranges[(90+angle)*2]
+    d = msg.ranges[90*2]
+
+    # find alpha
+    alpha = math.atan2(d_offset*math.cos(math.radians(angle))-d, 
+                        d_offset*math.sin(math.radians(angle)))
+
+    # find D_perp
+    D_perp = d * math.cos(alpha)
+
+    # find D_perp+L
+    D_perp_L = L*math.sin(alpha) + D_perp
+
+    # get error
+    error = d_setpoint - D_perp_L
+
+    # PID constants
+    # for now it is "???", they need to be figured out through experimenting
+    K_p = ??? # , lets say 
+    K_i = ???
+    K_d = ???
+
+    # add new error to list
+    length = len(self.e_k)
+    k = length-1
+
+    """Proportional"""
+    P = K_p * error
+ 
+    """Integration"""
+    # window range for integration
+    window = 100
+    Sum = 0   
+
+    # logic for if list length is less than desired
+    if length < window:
+        # add new error value to list and 
+        # sigma method var
+        self.e_k.append(error)
+        self.Sigma += error
+
+        # update length and k
+        length += 1
+        k  += 1
+    else 
+        # remove first error in list from 
+        # sigma method var and list
+        # add new error
+        self.Sigma += error - self.e_k[0]
+        self.e_k.pop(0)
+        self.e_k.append(error)
+        Sum = self.Sigma
+
+    I = K_i * Sum * 0.1
+
+    """Derivative"""
+    # for now, we will only be using a PI controller
+    # this is if we want to test 
+    D = 0 
+    # if length > 1:
+    #   D = K_d * (self.e_k[k]-self.e_k[k-1])/0.1 
+
+    # steering angle
+    u = P + I + D
+
+    # store as steering angle
+    acker_msg.drive.steering_angle = math.radian(u)
+
+    Optional: log acker_msg to terminal
+    publish AckermannDriveStamped acker_msg
+
+-------------------------------------------------------------------------------------------------------
+
