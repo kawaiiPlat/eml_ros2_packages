@@ -1,0 +1,3 @@
+[submodule "eml4930_gps_nav"]
+	path = eml4930_gps_nav
+	url = git@github.com:av-mae-uf/eml4930_gps_nav.git
