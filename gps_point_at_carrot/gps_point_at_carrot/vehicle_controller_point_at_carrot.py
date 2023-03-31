@@ -55,6 +55,10 @@ class VehicleController(Node):
         self.error_m1 = 0.0
         self.error_m2 = 0.0
 
+        self.Kp = 1.5
+        self.Ki = 0.32
+        self.Kd = 0.0
+
     def vehicle_pose_callback(self, msg):
         self.have_vehicle_pose = True
 
@@ -137,7 +141,7 @@ class VehicleController(Node):
 
             out_msg = AckermannDriveStamped()
             out_msg.drive.speed = self.speed
-            out_msg.drive.steering_angle = new_steering
+            out_msg.drive.steering_angle = self.current_steering
 
 
             self.publisher.publish(out_msg)

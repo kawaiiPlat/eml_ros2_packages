@@ -4,6 +4,7 @@ from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
 
 config_dir = get_package_share_directory("gps_nav")
+# config_dir = get_package_share_directory("gps_point_at_carrot")
 
 def generate_launch_description():
     return LaunchDescription([
@@ -14,7 +15,8 @@ def generate_launch_description():
             parameters = [
                 {'want_loop': False},
                 {'state_defs': '{0:\'OFF\', 1:\'ON\', 2:\'OUTSIDE\', 3:\'ENTRY_EXTENSION_PT\', 4:\'EXIT_EXTENSION_PT\', 5:\'EXIT_TURN_PT\', 6:\'START\', 7:\'END\', 8:\'UTURN_PT1\', 9:\'UTURN_PT2\', 10:\'UTURN_PT3\', 11:\'CORNER\', 12:\'END_EXTENSION\'}'},
-                {'pose_filename': config_dir + '/data/stockpile/bandshell_1.txt'}
+                {'pose_filename': config_dir + '/data/stockpile/bandshell_1.txt'},
+                # {'pose_filename': config_dir + '/data/carrot_poses.txt'}
             ]
         ),
         Node(
@@ -24,7 +26,7 @@ def generate_launch_description():
             output='screen'
         ),
         Node(
-            package='gps_nav_practice',
+            package='gps_point_at_carrot',
             executable='vehicle_controller_point_at_carrot',
             name='vehicle_controller_point_at_carrot',
             output='screen' 
