@@ -27,8 +27,8 @@ def generate_launch_description():
         ),
         Node(
             package='gps_point_at_carrot',
-            executable='vehicle_controller_point_at_carrot',
-            name='vehicle_controller_point_at_carrot',
+            executable='vehicle_controller_Stanley',
+            name='vehicle_controller_Stanley',
             output='screen' 
         ),
         Node(
