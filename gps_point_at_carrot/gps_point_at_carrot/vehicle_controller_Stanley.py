@@ -52,9 +52,8 @@ class VehicleController(Node):
 
         self.have_vehicle_pose = False
         self.have_goal_pose = False
-
-        self.K1 = 1.0
-        self.K2 = 4.0
+        
+        self.K = 0.22
 
     def vehicle_pose_callback(self, msg):
         self.have_vehicle_pose = True
@@ -118,13 +117,17 @@ class VehicleController(Node):
             # TODO: Make stanley controller 
             error_cross_track, error_headng_rad, line_pt = get_cross_track_and_heading_error(self.closest_point, self.closest_heading_rad, self.vehicle_point, self.vehicle_heading_rad)
 
-            steering_angle_rad = error_headng_rad + self.K1 * (error_headng_rad) + self.K2 * error_cross_track
+
+            # steering_angle_rad = (self.K1 * (error_headng_rad)) + (self.K2 * math.atan(error_cross_track))
+            steering_angle_rad = error_headng_rad + self.K*math.atan(error_cross_track)
 
             out_msg = AckermannDriveStamped()
             out_msg.drive.speed = self.speed
             out_msg.drive.steering_angle = steering_angle_rad
 
-            self.get_logger().info(f"{steering_angle_rad}")
+            self.get_logger().info(f"error_headng_rad: {error_headng_rad}")
+            self.get_logger().info(f"error_cross_track: {math.atan(error_cross_track)}")
+            self.get_logger().info(f"steering_angle_rad: {steering_angle_rad}")
 
             self.publisher.publish(out_msg)
 
