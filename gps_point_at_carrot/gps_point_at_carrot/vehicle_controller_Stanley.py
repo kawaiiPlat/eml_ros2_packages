@@ -53,7 +53,7 @@ class VehicleController(Node):
         self.have_vehicle_pose = False
         self.have_goal_pose = False
         
-        self.K = 1
+        self.K = 5
 
     def vehicle_pose_callback(self, msg):
         self.have_vehicle_pose = True
@@ -120,9 +120,9 @@ class VehicleController(Node):
             # steering_angle_rad = (self.K1 * (error_headng_rad)) + (self.K2 * math.atan(error_cross_track))
             steering_angle_rad = error_headng_rad + math.atan(self.K*error_cross_track)
 
-            while steering_angle_rad > math.radians(45):
+            if steering_angle_rad > math.radians(45):
                 steering_angle_rad = math.radians(45)
-            while steering_angle_rad < math.radians(-45):
+            if steering_angle_rad < math.radians(-45):
                 steering_angle_rad = math.radians(-45)
 
             out_msg = AckermannDriveStamped()
