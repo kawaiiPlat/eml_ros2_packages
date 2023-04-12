@@ -30,7 +30,7 @@ setup(
     entry_points={
         'console_scripts': [
             'vehicle_controller_point_at_carrot = gps_point_at_carrot.vehicle_controller_point_at_carrot:main',
-            'vehicle_controller_Stanley = gps_point_at_carrot.vehicle_controller_Stanley:main',
+            'vehicle_controller_Stanley = gps_point_at_carrot.vehicle_controller_Stanley_new:main',
 
         ],
     },

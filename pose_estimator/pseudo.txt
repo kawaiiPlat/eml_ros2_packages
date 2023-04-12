@@ -1,0 +1,47 @@
+Node 1: Pose_Estimator
+Import messages odometry from nav_msgs
+Import messages NavSatFix from sensro_mgs
+Import messages PoseStamped  from geometry_msgs
+Import math for cos sin pi atan2
+import time for program time possibly
+import utm
+
+Node Init:
+
+    publisher with topic vehicle_pose;  message PoseStamped
+    subscriber1 with topic odometry; message Odometry
+    subscriber2 with topic gps; message NavSatFix
+
+    timer with period 1.0/5.0
+    declare a t = 0 that you can interface in the callback (this means self.t)
+
+    self.x = 0
+    self.y = 0
+
+Node Sub Odemetry_Callback:
+
+    self.w = pose.pose.orientation.w
+    self.z = pose.pose.orientation.z
+    self.velocity = twist.twist.linear.x
+
+    self.theta = 2*math.atan2(self.z,self.w)
+
+    self.x = self.x + self.velocity * math.cos(self.theta) * 0.15
+    self.y = self.y + self.velocity * math.sin(self.theta) * 0.15
+
+Node Sub GPS Callback:
+    # to do
+    self.x, self.y, ~, ~ = utm.from_latlton(msg.latitude,msg.longitude)
+
+
+Node Timer Callback:
+    msgEst = PoseStamped()
+    msgEst.pose.position.x = self.x
+    msgEst.pose.position.y = self.y
+    msgEst.pose.orientation.z = self.z
+    msgEst.pose.orientation.w = self.w
+    msgEst.header.stamp = self.get_clock().now().to_msg()
+
+    publish msgEst
+
+-------------------------------------------------------------------------------------------------------
