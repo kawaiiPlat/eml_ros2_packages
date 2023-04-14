@@ -25,7 +25,7 @@ setup(
     entry_points={
         'console_scripts': [
             'pose_estimator = pose_estimator.pose_estimator:main',
-
+            'process_bagfile_csv = pose_estimator.process_bagfile_csv:main',
         ],
     },
 )

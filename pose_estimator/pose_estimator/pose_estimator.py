@@ -44,8 +44,8 @@ class Pose_Estimator(Node):
         self.theta = 2*atan2(self.z,self.w)
 
         # estimate next pose
-        self.x = self.x + self.velocity * cos(self.theta) * 0.15
-        self.y = self.y + self.velocity * sin(self.theta) * 0.15
+        self.x = self.x + self.velocity * cos(self.theta) * 0.05
+        self.y = self.y + self.velocity * sin(self.theta) * 0.05
 
     def gps_callback(self, msg):
 
