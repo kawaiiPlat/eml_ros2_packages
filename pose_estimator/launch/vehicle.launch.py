@@ -25,10 +25,22 @@ def generate_launch_description():
             name='goal_pose_creator',
             output='screen'
         ),
+        # Node(
+        #     package='gps_point_at_carrot',
+        #     executable='vehicle_controller_Stanley',
+        #     name='vehicle_controller_Stanley',
+        #     output='screen' 
+        # ),
         Node(
-            package='gps_point_at_carrot',
-            executable='vehicle_controller_Stanley',
-            name='vehicle_controller_Stanley',
+            package='project1_openloop_control',
+            executable='control_handler',
+            name='control_handler',
+            output='screen' 
+        ),
+        Node(
+            package='joy',
+            executable='joy_node',
+            name='joy_node',
             output='screen' 
         ),
         Node(

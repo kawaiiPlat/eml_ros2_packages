@@ -18,7 +18,7 @@ class CSVConverter(Node):
 
         self.cnt = 0
 
-        self.fp = open('data. ', 'w')
+        self.fp = open('data.txt', 'w')
         print('UTM E, UTM N', file=self.fp) # Where you need to match what you print later
 
     def callback(self, msg):

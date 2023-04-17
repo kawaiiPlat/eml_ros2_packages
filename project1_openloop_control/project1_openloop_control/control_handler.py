@@ -41,8 +41,12 @@ class control_handler(Node):
         stop_button = msg.buttons[index]
 
         # if not pressed
-        acker_msg.drive.speed = msg.axes[1] * 6.0
-        acker_msg.drive.steering_angle = math.radians(msg.axes[0] * -45.0)
+        # acker_msg.drive.speed = msg.axes[1] * 6.0
+        acker_msg.drive.steering_angle = math.radians(msg.axes[0] * 45.0)
+
+        rt = msg.axes[5]
+        lt = -1.0 * msg.axes[2]
+        acker_msg.drive.speed = (rt+lt) * 4.0
 
         # display new parameter if changed
         if my_param is not self.start_param:

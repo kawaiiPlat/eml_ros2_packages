@@ -34,11 +34,11 @@ class Pose_Estimator(Node):
     def odometry_callback(self, msg):
 
         # get w and z
-        self.w = msg.pose.orientation.w
-        self.z = msg.pose.orientation.z
+        self.w = msg.pose.pose.orientation.w
+        self.z = msg.pose.pose.orientation.z
 
         # get velocity
-        self.velocity = msg.twist.linear.x
+        self.velocity = msg.twist.twist.linear.x
 
         # get quaternion angle
         self.theta = 2*atan2(self.z,self.w)
