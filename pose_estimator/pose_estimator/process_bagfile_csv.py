@@ -2,6 +2,9 @@
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import PoseStamped
+from sensor_msgs.msg import NavSatFix
+import utm
+
 
 
 
@@ -11,6 +14,8 @@ class CSVConverter(Node):
         super().__init__('csv_converter')
         self.subscription = self.create_subscription(
             msg_type=PoseStamped,
+            # msg_type=NavSatFix,
+            # topic="gps",
             topic="vehicle_pose",
             callback= self.callback,
             qos_profile=1)
@@ -23,10 +28,14 @@ class CSVConverter(Node):
 
     def callback(self, msg):
 
+        # self.x, self.y, _, _ = utm.from_latlon(msg.latitude,msg.longitude)
+
         self.get_logger().info('cnt = "%d' % self.cnt)
         self.cnt = self.cnt + 1
         print('gps count = ', self.cnt)
         print(msg.pose.position.x, ', ', msg.pose.position.y, file = self.fp) # this is where you are printing data
+        # print(self.x, ', ', self.y, file = self.fp) # this is where you are printing data
+
 
 def main(args=None):
     rclpy.init(args=args)
