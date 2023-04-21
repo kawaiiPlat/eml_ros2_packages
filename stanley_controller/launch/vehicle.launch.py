@@ -39,5 +39,12 @@ def generate_launch_description():
                 {'look_ahead_dist': 3.0},  # meters
                 {'speed': 2.0}  # meters/sec
             ] 
-        )
+        ),
+        Node(
+            package='pose_estimator',
+            executable='pose_estimator',
+            name='pose_estimator',
+            output='screen',
+        ),
+        
     ])

@@ -1,0 +1,13 @@
+panel 1:
+ros2 launch stanley_controller vehicle.launch.py
+
+
+pannel 2: 
+ssh tlustyav
+ros2 launch vehicle_launch vehicle.launch.py
+
+panel 3:
+ros2 launch gps_nav visualization.launch.py
+
+pannel 4: 
+ros2 param set motion_spec_provider speed 2.0

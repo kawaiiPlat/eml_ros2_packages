@@ -22,7 +22,7 @@ class VehicleControllerTemplate(Node):
         self.subscription2 = self.create_subscription(CurrentGoalPose, "current_goal_pose", self.current_goal_pose_callback, 1)
 
         self.publisher = self.create_publisher(AckermannDriveStamped, "vehicle_command_ackermann", 10)
-        self.publisher2 = self.create_publisher(Twist, "vehicle_command_twist", 10)
+        # self.publisher2 = self.create_publisher(Twist, "vehicle_command_twist", 10)
 
         # set up the timer (0.1 sec) to send over the current_carrot message to the vehicle controller
         self.main_timer = self.create_timer(0.1, self.main_timer_callback)

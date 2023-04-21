@@ -2,7 +2,7 @@ Node 1: stanley_controller
 Import math for cos sin pi
 import time for program time possibly
 
-from geometry_msgs.msg import PoseStamped, Twist
+from geometry_msgs.msg import PoseStamped
 from gps_nav_interfaces.msg import CurrentGoalPose
 from ackermann_msgs.msg import AckermannDriveStamped
 from gps_nav.uf_support.route_support import get_cross_track_and_heading_error
@@ -15,8 +15,6 @@ Node Init:
     subscriber with topic current_goal_pose; message CurrentGoalPose
 
     publisher with topic vehicle_command_ackermann; message AckermannDriveStamped
-
-    publisher with topic vehicle_command_twist; message Twist # huh
 
     # set up the timer (0.1 sec) to send over the current_carrot message to the vehicle controller
     self.main_timer = self.create_timer(0.1, self.main_timer_callback)
@@ -103,14 +101,5 @@ NODE main_timer_callback(self):
     out_msg = AckermannDriveStamped()
     out_msg.drive.speed = self.speed
     out_msg.drive.steering_angle = steering_angle_rad
-
-    ''' IDK WHATS GOING ON HERE '''
-    # now send a VehCmd message out
-    # out_msg = VehCmd()
-    # out_msg.steering_angle = 0.0
-    # if self.speed < 0.01:
-    #     out_msg.throttle_effort = 0.0
-    # else:
-    #     out_msg.throttle_effort = 50.0  # percent
 
     self.publisher.publish(out_msg)
