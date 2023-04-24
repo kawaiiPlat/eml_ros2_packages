@@ -1,0 +1,25 @@
+rosbag2_bagfile_information:
+  version: 4
+  storage_identifier: sqlite3
+  relative_file_paths:
+    - gps_odom_bag_0.db3
+  duration:
+    nanoseconds: 76346950436
+  starting_time:
+    nanoseconds_since_epoch: 1682105337383165558
+  message_count: 1605
+  topics_with_message_count:
+    - topic_metadata:
+        name: /gps
+        type: sensor_msgs/msg/NavSatFix
+        serialization_format: cdr
+        offered_qos_profiles: ""
+      message_count: 77
+    - topic_metadata:
+        name: /odometry
+        type: nav_msgs/msg/Odometry
+        serialization_format: cdr
+        offered_qos_profiles: ""
+      message_count: 1528
+  compression_format: ""
+  compression_mode: ""

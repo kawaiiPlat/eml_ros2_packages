@@ -3,7 +3,7 @@ import rclpy
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import NavSatFix
 from geometry_msgs.msg import PoseStamped
-from math import cos, sin, pi, atan2
+from math import cos, sin, pi, atan2, isclose
 from time import time # maybe?
 import utm
 
@@ -31,6 +31,9 @@ class Pose_Estimator(Node):
         self.theta = 0.0
         self.velocity = 0.0
 
+        self.firstLat = 0
+        self.firstLong = 0 
+
     def odometry_callback(self, msg):
 
         # get w and z
@@ -38,7 +41,7 @@ class Pose_Estimator(Node):
         self.z = msg.pose.pose.orientation.z
 
         # get velocity
-        self.velocity = msg.twist.twist.linear.x
+        self.velocity = msg.twist.twist.linear.x * 3
 
         # get quaternion angle
         self.theta = 2*atan2(self.z,self.w)
@@ -49,8 +52,26 @@ class Pose_Estimator(Node):
 
     def gps_callback(self, msg):
 
-        # update x and y with "actual" gps values
-        self.x, self.y, _, _ = utm.from_latlon(msg.latitude,msg.longitude)
+        # update x and y with "actual" gps values if it still has a fixing
+        # self.x, self.y, _, _ = utm.from_latlon(msg.latitude,msg.longitude)
+
+        # check if it has a fixing, attempting 1
+        # if msg.latitude != 0 or msg.longitude != 0:
+        #     self.x, self.y, _, _ = utm.from_latlon(msg.latitude,msg.longitude)
+
+        # check if it has a fixing, attempting 2
+        # if self.firstLat == 0 and self.firstLong == 0:
+        #     self.firstLat = msg.latitude
+        #     self.firstLong = msg.longitude
+        
+        # if isclose(self.firstLat, msg.latitude, abs_tol = 50) and isclose(self.firstLong, msg.longitude, abs_tol = 50) :
+        #     self.x, self.y, _, _ = utm.from_latlon(msg.latitude,msg.longitude)
+
+        # Aditya told me NavSatFix has a status var, rippp
+        # check if the gps has a status
+        if msg.status.status >= msg.status.STATUS_FIX:
+            self.x, self.y, _, _ = utm.from_latlon(msg.latitude,msg.longitude)
+
         pass
         
     def timer_callback(self):
