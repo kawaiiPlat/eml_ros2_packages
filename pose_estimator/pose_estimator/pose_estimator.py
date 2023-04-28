@@ -41,7 +41,7 @@ class Pose_Estimator(Node):
         self.z = msg.pose.pose.orientation.z
 
         # get velocity
-        self.velocity = msg.twist.twist.linear.x * 3
+        self.velocity = msg.twist.twist.linear.x #* 3
 
         # get quaternion angle
         self.theta = 2*atan2(self.z,self.w)

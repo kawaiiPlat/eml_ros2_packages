@@ -54,7 +54,7 @@ class VehicleControllerTemplate(Node):
         self.yvec = np.array([0.0, 1.0, 0.0])
         self.zvec = np.array([0.0, 0.0, 1.0])
 
-        self.K = 5
+        self.K = 0.25
 
     def vehicle_pose_callback(self, msg):
         self.have_vehicle_pose = True
@@ -92,11 +92,10 @@ class VehicleControllerTemplate(Node):
 
         if not (self.have_goal_pose and self.have_vehicle_pose):  # don't touch this
             return
-
         # Put your controller below here.            
         error_cross_track, error_headng_rad, line_pt = get_cross_track_and_heading_error(self.closest_point, self.closest_heading_rad, self.vehicle_point, self.vehicle_heading_rad)
 
-        steering_angle_rad = error_headng_rad + math.atan(self.K*error_cross_track)
+        steering_angle_rad = error_headng_rad + math.atan2(self.K*error_cross_track,1.25)
 
         if steering_angle_rad > math.radians(45):
             steering_angle_rad = math.radians(45)
@@ -104,7 +103,7 @@ class VehicleControllerTemplate(Node):
             steering_angle_rad = math.radians(-45)
 
         out_msg = AckermannDriveStamped()
-        out_msg.drive.speed = self.speed
+        out_msg.drive.speed = 1.5
         out_msg.drive.steering_angle = steering_angle_rad
 
         # now send a VehCmd message out
